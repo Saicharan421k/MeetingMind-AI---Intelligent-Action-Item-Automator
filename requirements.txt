@@ -1,0 +1,4 @@
+Flask
+python-dotenv
+descope
+google-generativeai

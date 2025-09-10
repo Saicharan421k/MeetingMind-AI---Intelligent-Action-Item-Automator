@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeetingMind AI - Intelligent Action Item Automator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0A72EA;
+            --primary-blue-dark: #075BB8;
+            --accent-green: #34D399;
+            --accent-green-dark: #10B981;
+            --text-dark: #1F2937;
+            --text-gray: #4B5563;
+            --bg-light: #F9FAFB;
+            --bg-white: #FFFFFF;
+            --border-light: #E5E7EB;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: var(--bg-white);
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            transition: all 0.3s ease-in-out;
+            border: 1px solid var(--border-light);
+        }
+
+        .header-section {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.05em;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h2 {
+            color: var(--text-dark);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-green);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: var(--primary-blue-dark);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            padding: 30px;
+            margin-top: 30px;
+            text-align: left;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        input[type="email"], input[type="password"], textarea {
+            width: calc(100% - 24px); /* Adjusted for padding */
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(10, 114, 234, 0.2);
+            outline: none;
+            background-color: var(--bg-white);
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        button, a.button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--bg-white);
+            background-color: var(--primary-blue);
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: var(--shadow-sm);
+        }
+        button:hover, a.button:hover {
+            background-color: var(--primary-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        button:active, a.button:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .button-outline {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            box-shadow: none;
+        }
+        .button-outline:hover {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-accent {
+            background-color: var(--accent-green);
+        }
+        .button-accent:hover {
+            background-color: var(--accent-green-dark);
+        }
+
+        .button-danger {
+            background-color: #EF4444; /* Red */
+        }
+        .button-danger:hover {
+            background-color: #DC2626;
+        }
+
+        .button-social {
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            width: 100%; /* Make social buttons full width */
+            max-width: 250px;
+        }
+        .button-social:hover {
+            background-color: var(--bg-light);
+            box-shadow: var(--shadow-md);
+        }
+        .button-social img {
+            height: 1.25em;
+            margin-right: 10px;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--text-gray);
+        }
+        .or-divider::before, .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .or-divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+        .or-divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .flash-messages {
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .flash-error {
+            background-color: #FEF2F2; /* Red-50 */
+            color: #EF4444; /* Red-500 */
+            border-color: #FEE2E2; /* Red-100 */
+        }
+        .flash-success {
+            background-color: #ECFDF5; /* Green-50 */
+            color: #10B981; /* Green-600 */
+            border-color: #D1FAE5; /* Green-100 */
+        }
+        .flash-info {
+            background-color: #EFF6FF; /* Blue-50 */
+            color: #3B82F6; /* Blue-500 */
+            border-color: #DBEAFE; /* Blue-100 */
+        }
+
+        .extracted-action-item {
+            background-color: #F0FDF4; /* Light Green */
+            border: 1px solid #D1FAE5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease-in-out;
+        }
+        .extracted-action-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        .extracted-action-item strong {
+            color: var(--primary-blue-dark);
+            font-weight: 600;
+        }
+        .schedule-button {
+            background-color: var(--accent-green);
+            color: var(--text-dark); /* Changed text color for better contrast on green */
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
+        .schedule-button:hover {
+            background-color: var(--accent-green-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 25px;
+        }
+
+        /* Accessibility: Visually hidden labels */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            h2 {
+                font-size: 1.75rem;
+            }
+            h3 {
+                font-size: 1.3rem;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .button-group button, .button-group a.button {
+                width: 100%;
+                max-width: unset;
+            }
+            .button-social {
+                max-width: unset; /* Override max-width for full width on small screens */
+            }
+            .schedule-button {
+                position: static; /* Stack schedule button below text on small screens */
+                margin-top: 15px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1>MeetingMind AI</h1>
+            <p class="subtitle">Your intelligent assistant for transforming meeting discussions into securely scheduled action items. Smart, efficient, and user-friendly.</p>
+        </div>
+
+        {# Display Flask flash messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {# Show authentication options if user is not logged in #}
+        {% if not user_id %}
+        <div class="card auth-options-card">
+            <h2>Start Organizing Your Tasks</h2>
+            <p>Choose your preferred method to sign up or log in.</p>
+
+            <form method="POST" action="{{ url_for('send_magic_link') }}">
+                <h3>Magic Link Login/Sign Up</h3>
+                <label for="email_magic_link" class="sr-only">Email for Magic Link</label>
+                <input type="email" id="email_magic_link" name="email" placeholder="Enter your email for instant access" required>
+                <button type="submit" class="button">Send Magic Link</button>
+            </form>
+
+            <div class="or-divider">OR</div>
+
+            <h3>Email & Password</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 250px;">
+                    <form method="POST" action="{{ url_for('signup_password') }}">
+                        <h4>Sign Up</h4>
+                        <label for="email_signup" class="sr-only">Email</label>
+                        <input type="email" id="email_signup" name="email" placeholder="Your email" required>
+                        <label for="password_signup" class="sr-only">Password</label>
+                        <input type="password" id="password_signup" name="password" placeholder="Choose a password" required>
+                        <button type="submit" class="button-outline" style="width: 100%;">Sign Up</button>
+                    </form>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <form method="POST" action="{{ url_for('login_password') }}">
+                        <h4>Login</h4>
+                        <label for="email_login" class="sr-only">Email</label>
+                        <input type="email" id="email_login" name="email" placeholder="Your email" required>
+                        <label for="password_login" class="sr-only">Password</label>
+                        <input type="password" id="password_login" name="password" placeholder="Your password" required>
+                        <button type="submit" class="button" style="width: 100%;">Login</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="or-divider">OR Continue with</div>
+
+            <div class="button-group">
+                <a href="{{ url_for('social_login_google') }}" class="button button-social">
+                    <img src="https://www.descope.com/images/google-icon.svg" alt="Google"> Google
+                </a>
+                <a href="{{ url_for('social_login_microsoft') }}" class="button button-social">
+                    <img src="https://www.descope.com/images/microsoft-icon.svg" alt="Microsoft"> Microsoft
+                </a>
+                <a href="{{ url_for('social_login_github') }}" class="button button-social">
+                    <img src="https://www.descope.com/images/github-icon.svg" alt="GitHub"> GitHub
+                </a>
+                <a href="{{ url_for('passkey_action') }}" class="button button-social">
+                    <img src="https://www.descope.com/images/passkey-icon.svg" alt="Passkeys"> Passkeys
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Display user info and main application features if logged in #}
+        {% if user_id %}
+        <div class="card user-dashboard-card">
+            <h2>Hello, {{ user_email or user_id }}!</h2>
+            <p>Manage your tasks efficiently with MeetingMind AI.</p>
+            <a href="{{ url_for('logout') }}" class="button button-danger">Log Out</a>
+        </div>
+
+        {% set google_calendar_connected = session.get('google_access_token_' + user_id) %}
+
+        <div class="card calendar-connection-card">
+            {% if not google_calendar_connected %}
+            <h3>Connect Your Google Calendar</h3>
+            <p>Link your calendar to automatically schedule action items and stay organized.</p>
+            <a href="{{ url_for('connect_google_calendar') }}" class="button button-accent">
+                Connect Google Calendar
+            </a>
+            {% else %}
+            <h3>Google Calendar Connected!</h3>
+            <p>You're all set to extract notes and schedule them directly.</p>
+            {% endif %}
+        </div>
+
+        <div class="card action-item-card">
+            <h2>Extract Action Items</h2>
+            <form method="POST" action="{{ url_for('extract_actions') }}">
+                <label for="meeting_notes_textarea" class="sr-only">Meeting Notes</label>
+                <textarea id="meeting_notes_textarea" name="meeting_notes" placeholder="Paste your meeting notes or transcript here..." rows="10"></textarea>
+                <button type="submit" class="button">Extract & Schedule Actions</button>
+            </form>
+
+            {# Display extracted actions if available in session #}
+            {% if session['extracted_actions'] %}
+            <h3>Extracted Actions:</h3>
+            <ul>
+                {% for action in session['extracted_actions'] %}
+                <li class="extracted-action-item">
+                    <strong>Task:</strong> {{ action.task }} <br>
+                    <strong>Assignee:</strong> {{ action.assignee }} <br>
+                    <strong>Deadline:</strong> {{ action.deadline }}
+                    {# Schedule button for each action item - Only if Google Calendar is connected #}
+                    {% if google_calendar_connected %}
+                    <a href="{{ url_for('schedule_action', task=action.task, assignee=action.assignee, deadline=action.deadline) }}" class="button schedule-button">
+                        Schedule
+                    </a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

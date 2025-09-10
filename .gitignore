@@ -1,0 +1,14 @@
+# Python virtual environment
+venv/
+.env
+
+# Compiled Python files
+__pycache__/
+*.pyc
+
+# IDE-specific files (e.g., VS Code)
+.vscode/
+
+# Any other local configuration files you might have
+*.log
+.DS_Store # macOS specific
